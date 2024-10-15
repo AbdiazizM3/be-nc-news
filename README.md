@@ -1,7 +1,8 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
-
+To set up the environment variables create .env. files for .env.development and .env.test
+Inside each file write PGDATABASE and assign it to the appropriate database name which can be found in the setup.sql file
+Run npm install
 
 
 --- 
