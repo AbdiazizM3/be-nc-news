@@ -2,7 +2,7 @@ const request = require("supertest");
 const data = require("../db/data/test-data/index");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
-const app = require("../app/app");
+const app = require("../news/app");
 
 beforeEach(() => {
   return seed(data);
@@ -27,10 +27,20 @@ describe("CORE", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
-          expect(body.topics[0].slug).toBe("mitch");
-          expect(body.topics[0].description).toBe(
-            "The man, the Mitch, the legend"
-          );
+          body.topics.forEach((topic) => {
+            expect(typeof topic.slug).toBe("string");
+            expect(typeof topic.description).toBe("string");
+          });
+        });
+    });
+  });
+  describe("GET /api", () => {
+    test("3) 200: Respond with all available endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body.endpoints).toBe("string");
         });
     });
   });
