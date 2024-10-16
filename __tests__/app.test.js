@@ -53,7 +53,7 @@ describe("CORE", () => {
         .then(({ body }) => {
           expect(typeof body.article.author).toBe("string");
           expect(typeof body.article.title).toBe("string");
-          expect(typeof body.article.article_id).toBe("number");
+          expect(body.article.article_id).toBe(2);
           expect(typeof body.article.body).toBe("string");
           expect(typeof body.article.topic).toBe("string");
           expect(typeof body.article.created_at).toBe("string");
@@ -75,6 +75,45 @@ describe("CORE", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found");
+        });
+    });
+  });
+  describe("GET /api/articles", () => {
+    test("7) 200: Responds with an array of article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(typeof article.article_id).toBe("number");
+            expect(typeof article.author).toBe("string");
+            expect(typeof article.title).toBe("string");
+            expect(typeof article.topic).toBe("string");
+            expect(typeof article.created_at).toBe("string");
+            expect(typeof article.votes).toBe("number");
+            expect(typeof article.comment_count).toBe("string");
+          });
+          expect(Array.isArray(body.articles)).toBe(true);
+        });
+    });
+    test("8) 200: Articles are sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("9) 200: No body properties are found on any of the objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(article).not.toHaveProperty("body");
+          });
         });
     });
   });
