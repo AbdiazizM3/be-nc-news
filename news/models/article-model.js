@@ -22,4 +22,31 @@ function fetchArticles() {
     });
 }
 
-module.exports = { fetchArticleById, fetchArticles };
+function fetchCommentById(id) {
+  return db
+    .query(
+      `SELECT comments.* FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE comments.article_id = $1 GROUP BY comments.comment_id ORDER BY created_at`,
+      [id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+}
+
+const checkIfArticleExists = async (article) => {
+  const isArticleReal = await db.query(
+    `SELECT * FROM articles WHERE article_id = $1`,
+    [article]
+  );
+
+  if (isArticleReal.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "Article not found" });
+  }
+};
+
+module.exports = {
+  fetchArticleById,
+  fetchArticles,
+  fetchCommentById,
+  checkIfArticleExists,
+};

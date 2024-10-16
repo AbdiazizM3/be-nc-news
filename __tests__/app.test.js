@@ -117,4 +117,54 @@ describe("CORE", () => {
         });
     });
   });
+  describe("GET /api/articles/:article_id/comments", () => {
+    test("10) 200: Responds with an array of comments from the given article_id with the appropriate properties", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          body.comments.forEach((comment) => {
+            expect(typeof comment.comment_id).toBe("number");
+            expect(typeof comment.body).toBe("string");
+            expect(comment.article_id).toBe(1);
+            expect(typeof comment.author).toBe("string");
+            expect(typeof comment.votes).toBe("number");
+            expect(typeof comment.created_at).toBe("string");
+          });
+          expect(Array.isArray(body.comments)).toBe(true);
+        });
+    });
+    test("11) 200: Should be sorted by the most recent comment first", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toBeSortedBy("created_at");
+        });
+    });
+    test("12) 400: Responds with an appropriate status and error message when provided with an invalid id", () => {
+      return request(app)
+        .get("/api/articles/not_a_valid_id/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("13) 404: Responds with an appropriate status and error message when provided with a valid id that doesn't exist", () => {
+      return request(app)
+        .get("/api/articles/999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Article not found");
+        });
+    });
+    test("14) 200: Return an empty object when passed an existing id with no values", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+  });
 });
