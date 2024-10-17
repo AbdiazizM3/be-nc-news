@@ -167,4 +167,46 @@ describe("CORE", () => {
         });
     });
   });
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("15) 201: Responds with the posted comment", () => {
+      const newItem = {
+        username: "rogersop",
+        body: "DEF",
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newItem)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment.comment_id).toBe(19);
+          expect(body.comment.author).toBe("rogersop");
+          expect(body.comment.body).toBe("DEF");
+          expect(body.comment.article_id).toBe(2);
+          expect(body.comment.votes).toBe(0);
+          expect(typeof body.comment.created_at).toBe("string");
+        });
+    });
+    test("16) 400: Responds with an appropriate status and error message when provided with incorrect fields", () => {
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("17) 400: Responds with an appropriate status and error message when provided with valid fields with incorrect values", () => {
+      const newItem = {
+        username: "rogersop",
+        body: 13,
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+  });
 });
