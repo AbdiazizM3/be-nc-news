@@ -24,10 +24,9 @@ function fetchArticles() {
 
 function fetchCommentById(id) {
   return db
-    .query(
-      `SELECT comments.* FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE comments.article_id = $1 GROUP BY comments.comment_id ORDER BY created_at`,
-      [id]
-    )
+    .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at`, [
+      id,
+    ])
     .then(({ rows }) => {
       return rows;
     });
@@ -66,10 +65,26 @@ function createComment(newPost, id) {
   });
 }
 
+function changeArticleById(id, body) {
+  const { inc_votes } = body;
+  return db
+    .query(
+      `
+    UPDATE articles SET votes = (SELECT votes FROM articles WHERE article_id = $2) + $1
+    WHERE article_id = $2
+    RETURNING *`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
 module.exports = {
   fetchArticleById,
   fetchArticles,
   fetchCommentById,
   checkIfArticleExists,
   createComment,
+  changeArticleById,
 };

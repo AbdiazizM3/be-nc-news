@@ -7,6 +7,7 @@ const {
   getArticles,
   getCommentById,
   addComment,
+  updateArticleById,
 } = require("./controllers/article-controller");
 
 app.use(express.json());
@@ -23,8 +24,9 @@ app.get("/api/articles/:article_id/comments", getCommentById);
 
 app.post("/api/articles/:article_id/comments", addComment);
 
+app.patch("/api/articles/:article_id", updateArticleById);
+
 app.use((err, req, res, next) => {
-  console.log(err);
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "Bad request" });
   } else {
@@ -41,6 +43,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ msg: "server error" });
 });
 
