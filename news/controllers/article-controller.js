@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchCommentById,
   checkIfArticleExists,
+  createComment,
 } = require("../models/article-model");
 
 function getAtricleById(req, res, next) {
@@ -32,4 +33,14 @@ function getCommentById(req, res, next) {
     })
     .catch(next);
 }
-module.exports = { getAtricleById, getArticles, getCommentById };
+
+function addComment(req, res, next) {
+  const { article_id } = req.params;
+  createComment(req.body, article_id)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+}
+
+module.exports = { getAtricleById, getArticles, getCommentById, addComment };

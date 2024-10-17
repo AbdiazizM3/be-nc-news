@@ -1,5 +1,5 @@
 const db = require("../../db/connection");
-
+const format = require("pg-format");
 function fetchArticleById(id) {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [id])
@@ -44,9 +44,32 @@ const checkIfArticleExists = async (article) => {
   }
 };
 
+function createComment(newPost, id) {
+  const { username, body } = newPost;
+
+  if (typeof username !== "string" || typeof body !== "string") {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  const insertItemStr = format(
+    `
+    INSERT INTO comments
+    (author, body, article_id)
+    VALUES
+    (%L)
+    RETURNING *
+    `,
+    [username, body, id]
+  );
+  return db.query(insertItemStr).then(({ rows }) => {
+    return rows[0];
+  });
+}
+
 module.exports = {
   fetchArticleById,
   fetchArticles,
   fetchCommentById,
   checkIfArticleExists,
+  createComment,
 };
