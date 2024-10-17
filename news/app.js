@@ -5,10 +5,13 @@ const { getEndpoints } = require("./controllers/endpoint-controller");
 const {
   getAtricleById,
   getArticles,
-  getCommentById,
-  addComment,
   updateArticleById,
 } = require("./controllers/article-controller");
+const {
+  getCommentById,
+  addComment,
+  deleteCommentById,
+} = require("./controllers/comment-controller");
 
 app.use(express.json());
 
@@ -25,6 +28,8 @@ app.get("/api/articles/:article_id/comments", getCommentById);
 app.post("/api/articles/:article_id/comments", addComment);
 
 app.patch("/api/articles/:article_id", updateArticleById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502") {

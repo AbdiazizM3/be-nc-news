@@ -251,4 +251,25 @@ describe("CORE", () => {
         });
     });
   });
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("21) 204: Responds with no content", () => {
+      return request(app).delete("/api/comments/4").expect(204);
+    });
+    test("22) 404: Responds with an appropriate status and error message when provided with a valid id that does not exist", () => {
+      return request(app)
+        .delete("/api/comments/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+    test("23) 400: Responds with an appropriate status and error message when given an invalid id", () => {
+      return request(app)
+        .delete("/api/comments/not_a_valid_id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+  });
 });
