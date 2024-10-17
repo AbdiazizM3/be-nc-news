@@ -4,6 +4,7 @@ const {
   fetchCommentById,
   checkIfArticleExists,
   createComment,
+  changeArticleById,
 } = require("../models/article-model");
 
 function getAtricleById(req, res, next) {
@@ -43,4 +44,19 @@ function addComment(req, res, next) {
     .catch(next);
 }
 
-module.exports = { getAtricleById, getArticles, getCommentById, addComment };
+function updateArticleById(req, res, next) {
+  const { article_id } = req.params;
+  changeArticleById(article_id, req.body)
+    .then((article) => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
+}
+
+module.exports = {
+  getAtricleById,
+  getArticles,
+  getCommentById,
+  addComment,
+  updateArticleById,
+};

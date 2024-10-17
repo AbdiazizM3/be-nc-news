@@ -209,4 +209,46 @@ describe("CORE", () => {
         });
     });
   });
+  describe("PATCH /api/articles/:article_id", () => {
+    test("18) 201: Responds with with the updated article", () => {
+      const update = { inc_votes: 2 };
+      return request(app)
+        .patch("/api/articles/3")
+        .send(update)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.article_id).toBe(3);
+          expect(body.article.title).toBe(
+            "Eight pug gifs that remind me of mitch"
+          );
+          expect(body.article.topic).toBe("mitch");
+          expect(body.article.author).toBe("icellusedkars");
+          expect(body.article.body).toBe("some gifs");
+          expect(typeof body.article.created_at).toBe("string");
+          expect(body.article.votes).toBe(2);
+          expect(body.article.article_img_url).toBe(
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          );
+        });
+    });
+    test("19) 400: Responds with an appropriate status and error message when provided a body with invalid fields", () => {
+      return request(app)
+        .patch("/api/articles/3")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("20) 400: Responds with an appropriate status and error message when provided a body with valid fields with invalid values", () => {
+      const update = { inc_votes: "Hi" };
+      return request(app)
+        .patch("/api/articles/3")
+        .send(update)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+  });
 });
