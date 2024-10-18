@@ -30,8 +30,7 @@
     "description": "serves an article object based on its id",
     "queries": [],
     "exampleResponse": {
-      "articles": [
-        {
+      "articles": {
         "article_id": 2,
         "title": "Sony Vaio; or, The Laptop",
         "topic": "mitch",
@@ -41,7 +40,6 @@
         "votes": 0,
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
     }
   },
   "GET /api/articles/:article_id/comments": {
@@ -63,8 +61,7 @@
       "description": "serves a new comment object based on inputs into the corresponding article_id",
       "queries": [],
       "exampleResponse": {
-        "comment": [
-          {
+        "comment": {
             "comment_id": 19,
             "author": "rogersop",
             "body": "DEF",
@@ -72,7 +69,6 @@
             "votes": 0,
             "created_at": 0
           }
-        ]
       },
       "exampleRequest": {
         "username": "rogersop",
@@ -84,8 +80,7 @@
     "description": "serves an updated article object based on its id",
     "queries": [],
     "exampleResponse": {
-      "article": [
-        {
+      "article": {
           "title": "A",
           "topic": "mitch",
           "author": "icellusedkars",
@@ -95,7 +90,6 @@
           "article_img_url":
       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
     },
     "exampleRequest": {
       "inc_votes": 2
@@ -105,5 +99,18 @@
     "description": "serves no content but deletes a comment from comments",
     "queries": [],
     "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "serves an array of all user objects",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
   }
 }

@@ -331,4 +331,26 @@ describe("CORE", () => {
         });
     });
   });
+  describe("CORE: GET /api/users", () => {
+    test("29) 200: Responds with an array of user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.users)).toBe(true);
+        });
+    });
+    test("30) 200: Response contains the properties of username, name, and avatar_url", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          body.users.forEach((user) => {
+            expect(typeof user.username).toBe("string");
+            expect(typeof user.name).toBe("string");
+            expect(typeof user.avatar_url).toBe("string");
+          });
+        });
+    });
+  });
 });
