@@ -32,7 +32,7 @@ app.patch("/api/articles/:article_id", updateArticleById);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02" || err.code === "23502") {
+  if (err.code) {
     res.status(400).send({ msg: "Bad request" });
   } else {
     next(err);
@@ -48,7 +48,6 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
   res.status(500).send({ msg: "server error" });
 });
 

@@ -26,7 +26,7 @@ function createComment(newPost, id) {
   const { username, body } = newPost;
 
   if (typeof username !== "string" || typeof body !== "string") {
-    return Promise.reject({ status: 400, msg: "Bad request" });
+    return Promise.reject({ status: 400, msg: "Invalid input" });
   }
 
   const insertItemStr = format(
@@ -57,12 +57,24 @@ function removeComment(id) {
 
 const checkIfCommentExists = async (id) => {
   const isCommentReal = await db.query(
-    "SELECT * FROM comments WHERE comment_id = $1",
+    `SELECT * FROM comments WHERE comment_id = $1`,
     [id]
   );
 
   if (isCommentReal.rows.length === 0) {
     return Promise.reject({ status: 404, msg: "Not found" });
+  }
+};
+
+const checkIfUsernameExists = async (body) => {
+  const { username } = body;
+  const isUsernameReal = await db.query(
+    `SELECT * FROM users WHERE username = $1`,
+    [username]
+  );
+
+  if (isUsernameReal.rows.length === 0) {
+    return Promise.reject({ status: 400, msg: "User does not exist" });
   }
 };
 
@@ -72,4 +84,5 @@ module.exports = {
   createComment,
   removeComment,
   checkIfCommentExists,
+  checkIfUsernameExists,
 };

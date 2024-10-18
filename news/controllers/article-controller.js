@@ -2,6 +2,7 @@ const {
   fetchArticleById,
   fetchArticles,
   changeArticleById,
+  checkIfArticleExists,
 } = require("../models/article-model");
 
 function getAtricleById(req, res, next) {
@@ -23,9 +24,13 @@ function getArticles(req, res, next) {
 
 function updateArticleById(req, res, next) {
   const { article_id } = req.params;
-  changeArticleById(article_id, req.body)
-    .then((article) => {
-      res.status(201).send({ article });
+  checkIfArticleExists(article_id)
+    .then(() => {
+      changeArticleById(article_id, req.body)
+        .then((article) => {
+          res.status(201).send({ article });
+        })
+        .catch(next);
     })
     .catch(next);
 }

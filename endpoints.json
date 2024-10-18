@@ -66,13 +66,17 @@
         "comment": [
           {
             "comment_id": 19,
-            "author": "username",
-            "body": "comment to post... ",
+            "author": "rogersop",
+            "body": "DEF",
             "article_id": 2,
             "votes": 0,
             "created_at": 0
           }
         ]
+      },
+      "exampleRequest": {
+        "username": "rogersop",
+        "body": "DEF"
       }
     }
   },
@@ -92,6 +96,9 @@
       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
+    },
+    "exampleRequest": {
+      "inc_votes": 2
     }
   },
   "DELETE /api/comments/:comment_id": {

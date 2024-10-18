@@ -4,6 +4,7 @@ const {
   createComment,
   removeComment,
   checkIfCommentExists,
+  checkIfUsernameExists,
 } = require("../models/comment-model");
 
 function getCommentById(req, res, next) {
@@ -19,9 +20,17 @@ function getCommentById(req, res, next) {
 
 function addComment(req, res, next) {
   const { article_id } = req.params;
-  createComment(req.body, article_id)
-    .then((comment) => {
-      res.status(201).send({ comment });
+  checkIfArticleExists(article_id)
+    .then(() => {
+      checkIfUsernameExists(req.body)
+        .then(() => {
+          createComment(req.body, article_id)
+            .then((comment) => {
+              res.status(201).send({ comment });
+            })
+            .catch(next);
+        })
+        .catch(next);
     })
     .catch(next);
 }
