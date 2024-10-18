@@ -1,5 +1,6 @@
 const db = require("../../db/connection");
 const format = require("pg-format");
+
 function fetchArticleById(id) {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [id])
@@ -22,13 +23,21 @@ function fetchArticles() {
     });
 }
 
-function fetchCommentById(id) {
+function changeArticleById(id, body) {
+  const { inc_votes } = body;
+  if (typeof inc_votes !== "number" || !inc_votes) {
+    return Promise.reject({ status: 400, msg: "Invalid input" });
+  }
   return db
-    .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at`, [
-      id,
-    ])
+    .query(
+      `
+    UPDATE articles SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *`,
+      [inc_votes, id]
+    )
     .then(({ rows }) => {
-      return rows;
+      return rows[0];
     });
 }
 
@@ -43,48 +52,9 @@ const checkIfArticleExists = async (article) => {
   }
 };
 
-function createComment(newPost, id) {
-  const { username, body } = newPost;
-
-  if (typeof username !== "string" || typeof body !== "string") {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
-  const insertItemStr = format(
-    `
-    INSERT INTO comments
-    (author, body, article_id)
-    VALUES
-    (%L)
-    RETURNING *
-    `,
-    [username, body, id]
-  );
-  return db.query(insertItemStr).then(({ rows }) => {
-    return rows[0];
-  });
-}
-
-function changeArticleById(id, body) {
-  const { inc_votes } = body;
-  return db
-    .query(
-      `
-    UPDATE articles SET votes = (SELECT votes FROM articles WHERE article_id = $2) + $1
-    WHERE article_id = $2
-    RETURNING *`,
-      [inc_votes, id]
-    )
-    .then(({ rows }) => {
-      return rows[0];
-    });
-}
-
 module.exports = {
   fetchArticleById,
   fetchArticles,
-  fetchCommentById,
-  checkIfArticleExists,
-  createComment,
   changeArticleById,
+  checkIfArticleExists,
 };

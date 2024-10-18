@@ -192,7 +192,7 @@ describe("CORE", () => {
         .send({})
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
+          expect(body.msg).toBe("User does not exist");
         });
     });
     test("17) 400: Responds with an appropriate status and error message when provided with valid fields with incorrect values", () => {
@@ -205,12 +205,51 @@ describe("CORE", () => {
         .send(newItem)
         .expect(400)
         .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+    test("18) 400: Responds with an appropriate status and error message when provided with an invalid id", () => {
+      const newItem = {
+        username: "rogersop",
+        body: "DEF",
+      };
+      return request(app)
+        .post("/api/articles/not_a_valid_id/comments")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
           expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("19) 404: Responds with an appropriate status and error message when provided with a valid id that does not exist", () => {
+      const newItem = {
+        username: "rogersop",
+        body: "DEF",
+      };
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send(newItem)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Article not found");
+        });
+    });
+    test("20) 400: Responds with an appropriate status and error message when provided with correct data but username does not exist", () => {
+      const newItem = {
+        username: "ABC",
+        body: "DEF",
+      };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("User does not exist");
         });
     });
   });
   describe("PATCH /api/articles/:article_id", () => {
-    test("18) 201: Responds with with the updated article", () => {
+    test("21) 201: Responds with with the updated article", () => {
       const update = { inc_votes: 2 };
       return request(app)
         .patch("/api/articles/3")
@@ -231,20 +270,61 @@ describe("CORE", () => {
           );
         });
     });
-    test("19) 400: Responds with an appropriate status and error message when provided a body with invalid fields", () => {
+    test("22) 400: Responds with an appropriate status and error message when provided with a body with invalid fields", () => {
       return request(app)
         .patch("/api/articles/3")
         .send({})
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).toBe("Bad request");
+          expect(body.msg).toBe("Invalid input");
         });
     });
-    test("20) 400: Responds with an appropriate status and error message when provided a body with valid fields with invalid values", () => {
+    test("23) 400: Responds with an appropriate status and error message when provided with a body with valid fields with invalid values", () => {
       const update = { inc_votes: "Hi" };
       return request(app)
         .patch("/api/articles/3")
         .send(update)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+    test("24) 400: Responds with an appropriate status and error message when provided with an invalid id", () => {
+      const update = { inc_votes: 5 };
+      return request(app)
+        .patch("/api/articles/not_a_valid_id")
+        .send(update)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("25) 404: Responds with an appropriate status and error message when provided with a valid id that does not exist", () => {
+      const update = { inc_votes: 5 };
+      return request(app)
+        .patch("/api/articles/99999")
+        .send(update)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Article not found");
+        });
+    });
+  });
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("26) 204: Responds with no content", () => {
+      return request(app).delete("/api/comments/4").expect(204);
+    });
+    test("27) 404: Responds with an appropriate status and error message when provided with a valid id that does not exist", () => {
+      return request(app)
+        .delete("/api/comments/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+    test("28) 400: Responds with an appropriate status and error message when given an invalid id", () => {
+      return request(app)
+        .delete("/api/comments/not_a_valid_id")
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad request");
