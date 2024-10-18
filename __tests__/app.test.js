@@ -364,9 +364,21 @@ describe("CORE", () => {
   describe("GET /api/articles (sorting queries)", () => {
     test("31) 200: Response will sort articles by any valid column in either ascending or descending order", () => {
       return request(app)
-        .get("/api/articles?")
+        .get("/api/articles?author=ASC")
         .expect(200)
-        .then(({ body }) => {});
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("author");
+        });
+    });
+    test("32) 200: Response will sort articles by created_at in descending order by default when no query is passed or an invalid query is passed", () => {
+      return request(app)
+        .get("/api/articles?invalid_queryr=ABC")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
     });
   });
 });

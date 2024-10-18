@@ -15,7 +15,15 @@ function getAtricleById(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  fetchArticles()
+  const url = req.url;
+  let sort = "";
+  let order = "";
+  if (url.includes("?")) {
+    const query = url.split("?")[1].split("=");
+    sort += query[0];
+    order += query[1];
+  }
+  fetchArticles(sort, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
