@@ -364,7 +364,7 @@ describe("CORE", () => {
   describe("GET /api/articles (sorting queries)", () => {
     test("31) 200: Response will sort articles by any valid column in either ascending or descending order", () => {
       return request(app)
-        .get("/api/articles?author=ASC")
+        .get("/api/articles?sort=author&&order=ASC")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toBeSortedBy("author");
@@ -378,6 +378,27 @@ describe("CORE", () => {
           expect(body.articles).toBeSortedBy("created_at", {
             descending: true,
           });
+        });
+    });
+  });
+  describe("GET /api/articles (topic query)", () => {
+    test("33) 200: Response will filters articles by the specified topic value", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(4);
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+    test("34) 200: Responds with all articles when query is omitted", () => {
+      return request(app)
+        .get("/api/articles?topic")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(5);
         });
     });
   });
