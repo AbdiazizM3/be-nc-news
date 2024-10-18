@@ -3,7 +3,6 @@ const {
   checkIfArticleExists,
   createComment,
   removeComment,
-  checkIfCommentExists,
   checkIfUsernameExists,
 } = require("../models/comment-model");
 
@@ -37,11 +36,9 @@ function addComment(req, res, next) {
 
 function deleteCommentById(req, res, next) {
   const { comment_id } = req.params;
-  checkIfCommentExists(comment_id)
+  removeComment(comment_id)
     .then(() => {
-      removeComment(comment_id).then(() => {
-        res.status(204).send({});
-      });
+      res.status(204).send({});
     })
     .catch(next);
 }

@@ -28,6 +28,7 @@ describe("CORE", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
+          expect(body.topics.length).toBe(3);
           body.topics.forEach((topic) => {
             expect(typeof topic.slug).toBe("string");
             expect(typeof topic.description).toBe("string");
@@ -51,14 +52,18 @@ describe("CORE", () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body.article.author).toBe("string");
-          expect(typeof body.article.title).toBe("string");
+          expect(body.article.author).toBe("icellusedkars");
+          expect(body.article.title).toBe("Sony Vaio; or, The Laptop");
           expect(body.article.article_id).toBe(2);
-          expect(typeof body.article.body).toBe("string");
-          expect(typeof body.article.topic).toBe("string");
+          expect(body.article.body).toBe(
+            "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me."
+          );
+          expect(body.article.topic).toBe("mitch");
           expect(typeof body.article.created_at).toBe("string");
-          expect(typeof body.article.votes).toBe("number");
-          expect(typeof body.article.article_img_url).toBe("string");
+          expect(body.article.votes).toBe(0);
+          expect(body.article.article_img_url).toBe(
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          );
         });
     });
     test("5) 400: Responds with an appropriate status and error message when provided with an invalid id", () => {
@@ -84,6 +89,7 @@ describe("CORE", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
+          expect(body.articles.length).toBe(5);
           body.articles.forEach((article) => {
             expect(typeof article.article_id).toBe("number");
             expect(typeof article.author).toBe("string");
@@ -123,6 +129,7 @@ describe("CORE", () => {
         .get("/api/articles/1/comments")
         .expect(200)
         .then(({ body }) => {
+          expect(body.comments.length).toBe(11);
           body.comments.forEach((comment) => {
             expect(typeof comment.comment_id).toBe("number");
             expect(typeof comment.body).toBe("string");
@@ -345,12 +352,21 @@ describe("CORE", () => {
         .get("/api/users")
         .expect(200)
         .then(({ body }) => {
+          expect(body.users.length).toBe(4);
           body.users.forEach((user) => {
             expect(typeof user.username).toBe("string");
             expect(typeof user.name).toBe("string");
             expect(typeof user.avatar_url).toBe("string");
           });
         });
+    });
+  });
+  describe("GET /api/articles (sorting queries)", () => {
+    test("31) 200: Response will sort articles by any valid column in either ascending or descending order", () => {
+      return request(app)
+        .get("/api/articles?")
+        .expect(200)
+        .then(({ body }) => {});
     });
   });
 });
