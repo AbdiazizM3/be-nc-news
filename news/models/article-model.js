@@ -13,10 +13,27 @@ function fetchArticleById(id) {
     });
 }
 
-function fetchArticles() {
+function fetchArticles(sortBy, orderIn) {
+  const allowedSorts = [
+    "title",
+    "author",
+    "topic",
+    "created_at",
+    "votes",
+    "comment_count",
+    "body",
+  ];
+
+  const allowedOrder = ["ASC", "DESC"];
+
+  if (!allowedSorts.includes(sortBy) || !allowedOrder.includes(orderIn)) {
+    sortBy = "created_at";
+    orderIn = "DESC";
+  }
+
   return db
     .query(
-      `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC`
+      `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY ${sortBy} ${orderIn}`
     )
     .then(({ rows }) => {
       return rows;
