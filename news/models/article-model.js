@@ -16,7 +16,7 @@ function fetchArticleById(id) {
     });
 }
 
-function fetchArticles(topic, sortBy, orderIn) {
+function fetchArticles(author, topic, sortBy, orderIn) {
   const allowedSorts = [
     "title",
     "author",
@@ -42,6 +42,11 @@ function fetchArticles(topic, sortBy, orderIn) {
   if (topic) {
     queryValues.push(topic);
     qString += " WHERE topic = $1";
+  }
+
+  if (author) {
+    queryValues.push(author);
+    qString += " WHERE author = $1";
   }
 
   qString += `
