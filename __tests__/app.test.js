@@ -411,5 +411,13 @@ describe("CORE", () => {
           expect(body.article.comment_count).toBe("2");
         });
     });
+    test("36) 200: Returns an article with 0 comments", () => {
+      return request(app)
+        .get("/api/articles/4")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.article.comment_count).toBe("0");
+        });
+    });
   });
 });
