@@ -16,7 +16,7 @@ function fetchArticleById(id) {
     });
 }
 
-function fetchArticles(author, topic, sortBy, orderIn) {
+function fetchArticles(topic, sortBy, orderIn) {
   const allowedSorts = [
     "title",
     "author",
@@ -37,16 +37,11 @@ function fetchArticles(author, topic, sortBy, orderIn) {
   const queryValues = [];
 
   let qString = `SELECT articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id) AS comment_count
-  FROM articles JOIN comments ON articles.article_id = comments.article_id`;
+  FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   if (topic) {
     queryValues.push(topic);
     qString += " WHERE topic = $1";
-  }
-
-  if (author) {
-    queryValues.push(author);
-    qString += " WHERE author = $1";
   }
 
   qString += `

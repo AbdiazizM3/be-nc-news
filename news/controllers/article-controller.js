@@ -15,8 +15,8 @@ function getAtricleById(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  const { author, topic, sort, order } = req.query;
-  fetchArticles(author, topic, sort, order)
+  const { topic, sort, order } = req.query;
+  fetchArticles(topic, sort, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })

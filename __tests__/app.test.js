@@ -89,7 +89,7 @@ describe("CORE", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(5);
+          expect(body.articles.length).toBe(13);
           body.articles.forEach((article) => {
             expect(typeof article.article_id).toBe("number");
             expect(typeof article.author).toBe("string");
@@ -387,7 +387,7 @@ describe("CORE", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(4);
+          expect(body.articles.length).toBe(12);
           body.articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
@@ -398,7 +398,7 @@ describe("CORE", () => {
         .get("/api/articles?topic")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(5);
+          expect(body.articles.length).toBe(13);
         });
     });
   });
