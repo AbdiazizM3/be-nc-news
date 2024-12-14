@@ -3,6 +3,9 @@ const {
   fetchArticles,
   changeArticleById,
   checkIfArticleExists,
+  fetchCommentById,
+  createComment,
+  checkIfUsernameExists,
 } = require("../models/article-model");
 
 function getAtricleById(req, res, next) {
@@ -23,6 +26,34 @@ function getArticles(req, res, next) {
     .catch(next);
 }
 
+function getCommentById(req, res, next) {
+  const { article_id } = req.params;
+  checkIfArticleExists(article_id)
+    .then(() => {
+      fetchCommentById(article_id).then((comments) => {
+        res.status(200).send({ comments });
+      });
+    })
+    .catch(next);
+}
+
+function addComment(req, res, next) {
+  const { article_id } = req.params;
+  checkIfArticleExists(article_id)
+    .then(() => {
+      checkIfUsernameExists(req.body)
+        .then(() => {
+          createComment(req.body, article_id)
+            .then((comment) => {
+              res.status(201).send({ comment });
+            })
+            .catch(next);
+        })
+        .catch(next);
+    })
+    .catch(next);
+}
+
 function updateArticleById(req, res, next) {
   const { article_id } = req.params;
   checkIfArticleExists(article_id)
@@ -39,5 +70,7 @@ function updateArticleById(req, res, next) {
 module.exports = {
   getAtricleById,
   getArticles,
+  getCommentById,
+  addComment,
   updateArticleById,
 };
