@@ -421,3 +421,37 @@ describe("CORE", () => {
     });
   });
 });
+
+describe("ADVANCED", () => {
+  describe("GET /api/users/:username", () => {
+    test("200: Responds with a user object by its username", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body.user).toBe("object");
+          expect(body.user.username).toBe("butter_bridge");
+          expect(body.user.name).toBe("jonny");
+          expect(body.user.avatar_url).toBe(
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          );
+        });
+    });
+    test("400: Responds with an appropriate error when provided an invalid username", () => {
+      return request(app)
+        .get("/api/users/baa")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("404: Responds with an appropriate error when provided with a valid username that does not exist", () => {
+      return request(app)
+        .get("/api/users/not_a_user")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("User not found");
+        });
+    });
+  });
+});
