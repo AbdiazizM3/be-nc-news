@@ -424,7 +424,7 @@ describe("CORE", () => {
 
 describe("ADVANCED", () => {
   describe("GET /api/users/:username", () => {
-    test("200: Responds with a user object by its username", () => {
+    test("37) 200: Responds with a user object by its username", () => {
       return request(app)
         .get("/api/users/butter_bridge")
         .expect(200)
@@ -437,7 +437,7 @@ describe("ADVANCED", () => {
           );
         });
     });
-    test("400: Responds with an appropriate error when provided an invalid username", () => {
+    test("38) 400: Responds with an appropriate error when provided an invalid username", () => {
       return request(app)
         .get("/api/users/baa")
         .expect(400)
@@ -445,12 +445,70 @@ describe("ADVANCED", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("404: Responds with an appropriate error when provided with a valid username that does not exist", () => {
+    test("39) 404: Responds with an appropriate error when provided with a valid username that does not exist", () => {
       return request(app)
         .get("/api/users/not_a_user")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("User not found");
+        });
+    });
+  });
+  describe("PATCH /api/comments/:comment_id", () => {
+    test("40) 200: Responds with the updated comment object", () => {
+      const update = { inc_votes: -2 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(update)
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body.comment).toBe("object");
+          expect(body.comment.body).toBe(
+            "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!"
+          );
+          expect(body.comment.votes).toBe(14);
+          expect(body.comment.author).toBe("butter_bridge");
+          expect(body.comment.article_id).toBe(9);
+          expect(typeof body.comment.created_at).toBe("string");
+        });
+    });
+    test("41) 400: Responds with an appropriate error when passed a request with valid fields that have invalid inputs", () => {
+      const update = { inc_votes: "Hi" };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(update)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("42) 400: Responds with an appropriate error when request is passed with invalid fields", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("43) 400: Responds with an appropriate error when passed with an invalid id", () => {
+      const update = { inc_votes: -2 };
+      return request(app)
+        .patch("/api/comments/not_a_valid_id")
+        .send(update)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("44) 404: Responds with an appropriate error when passed a valid id that doesn't exist", () => {
+      const update = { inc_votes: -2 };
+      return request(app)
+        .patch("/api/comments/999999")
+        .send(update)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
         });
     });
   });
