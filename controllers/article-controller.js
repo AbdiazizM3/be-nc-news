@@ -56,7 +56,6 @@ function addComment(req, res, next) {
 
 function updateArticleById(req, res, next) {
   const { article_id } = req.params;
-  const id = article_id;
   checkIfArticleExists(article_id)
     .then(() => {
       changeArticleById(article_id, req.body)
