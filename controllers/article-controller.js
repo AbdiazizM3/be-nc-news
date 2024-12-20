@@ -6,6 +6,7 @@ const {
   fetchCommentById,
   createComment,
   checkIfUsernameExists,
+  createArticle,
 } = require("../models/article-model");
 
 function getAtricleById(req, res, next) {
@@ -67,10 +68,23 @@ function updateArticleById(req, res, next) {
     .catch(next);
 }
 
+function addArticle(req, res, next) {
+  checkIfUsernameExists(req.body)
+    .then(() => {
+      createArticle(req.body)
+        .then((article) => {
+          res.status(201).send({ article });
+        })
+        .catch(next);
+    })
+    .catch(next);
+}
+
 module.exports = {
   getAtricleById,
   getArticles,
   getCommentById,
   addComment,
   updateArticleById,
+  addArticle,
 };

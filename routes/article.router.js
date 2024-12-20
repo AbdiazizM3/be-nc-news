@@ -6,6 +6,7 @@ const {
   updateArticleById,
   getCommentById,
   addComment,
+  addArticle,
 } = require("../controllers/article-controller");
 
 const articleRouter = express.Router();
@@ -15,5 +16,6 @@ articleRouter.get("/", getArticles);
 articleRouter.get("/:article_id/comments", getCommentById);
 articleRouter.post("/:article_id/comments", addComment);
 articleRouter.patch("/:article_id", updateArticleById);
+articleRouter.post("/", addArticle);
 
 module.exports = articleRouter;

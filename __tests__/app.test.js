@@ -512,4 +512,72 @@ describe("ADVANCED", () => {
         });
     });
   });
+  describe("POST api/articles", () => {
+    test("45) 201: Responds with the posted article", () => {
+      const newItem = {
+        username: "icellusedkars",
+        title: "Kitties",
+        body: "The most adorable creatures on earth.",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newItem)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.author).toBe("icellusedkars");
+          expect(body.article.title).toBe("Kitties");
+          expect(body.article.body).toBe(
+            "The most adorable creatures on earth."
+          );
+          expect(body.article.topic).toBe("cats");
+          expect(body.article.article_img_url).toBe(
+            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+          );
+          expect(body.article.article_id).toBe(14);
+          expect(body.article.votes).toBe(0);
+          expect(typeof body.article.created_at).toBe("string");
+          expect(body.article.comment_count).toBe("0");
+        });
+    });
+    test("46) 400: Responds with appropriate errors when request has an invalid username", () => {
+      const newItem = {
+        username: "not_a_user",
+        title: "Kitties",
+        body: "The most adorable creatures on earth.",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("User does not exist");
+        });
+    });
+    test("46) 400: Responds with appropriate errors if request has invalid fields", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({ username: "icellusedkars" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+    test("47) 400: Responds with appropriate errors if request has valid fields with incorrect data types", () => {
+      const newItem = {
+        username: "icellusedkars",
+        title: 8,
+        body: "The most adorable creatures on earth.",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+  });
 });
