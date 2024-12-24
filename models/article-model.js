@@ -18,7 +18,7 @@ function fetchArticleById(id) {
     });
 }
 
-function fetchArticles(topic, sortBy, orderIn) {
+function fetchArticles(topic, sortBy, orderIn, limit, p) {
   const allowedSorts = [
     "title",
     "author",
@@ -28,6 +28,19 @@ function fetchArticles(topic, sortBy, orderIn) {
     "comment_count",
     "body",
   ];
+
+  let cap = limit;
+  let section = p;
+
+  if (limit && isNaN(limit)) {
+    cap = 10;
+  }
+
+  if (p && isNaN(p)) {
+    section = 1;
+  }
+
+  const page = (section - 1) * 10;
 
   const allowedOrder = ["ASC", "DESC"];
 
@@ -51,7 +64,17 @@ function fetchArticles(topic, sortBy, orderIn) {
        ORDER BY ${sortBy} ${orderIn}`;
 
   return db.query(qString, queryValues).then(({ rows }) => {
-    return rows;
+    const total = { total_count: rows.length };
+    if (cap) {
+      if (section > 1) {
+        return [...rows.slice(page, page + cap), total];
+      }
+      return [...rows.slice(0, cap), total];
+    }
+    if (p > 1) {
+      return [...rows.slice(page, page + 10), total];
+    }
+    return [...rows.slice(0, 10), total];
   });
 }
 

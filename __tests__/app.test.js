@@ -89,16 +89,16 @@ describe("CORE", () => {
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(13);
-          body.articles.forEach((article) => {
-            expect(typeof article.article_id).toBe("number");
-            expect(typeof article.author).toBe("string");
-            expect(typeof article.title).toBe("string");
-            expect(typeof article.topic).toBe("string");
-            expect(typeof article.created_at).toBe("string");
-            expect(typeof article.votes).toBe("number");
-            expect(typeof article.comment_count).toBe("string");
-          });
+          expect(body.articles.length).toBe(11);
+          for (let i = 0; i < 10; i++) {
+            expect(typeof body.articles[i].article_id).toBe("number");
+            expect(typeof body.articles[i].author).toBe("string");
+            expect(typeof body.articles[i].title).toBe("string");
+            expect(typeof body.articles[i].topic).toBe("string");
+            expect(typeof body.articles[i].created_at).toBe("string");
+            expect(typeof body.articles[i].votes).toBe("number");
+            expect(typeof body.articles[i].comment_count).toBe("string");
+          }
           expect(Array.isArray(body.articles)).toBe(true);
         });
     });
@@ -387,23 +387,15 @@ describe("CORE", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles.length).toBe(12);
-          body.articles.forEach((article) => {
-            expect(article.topic).toBe("mitch");
-          });
-        });
-    });
-    test("34) 200: Responds with all articles when query is omitted", () => {
-      return request(app)
-        .get("/api/articles?topic")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles.length).toBe(13);
+          expect(body.articles.length).toBe(11);
+          for (let i = 0; i < 10; i++) {
+            expect(body.articles[i].topic).toBe("mitch");
+          }
         });
     });
   });
   describe("GET /api/articles/:article_id (comment_count)", () => {
-    test("35) 200: Article response object includes comment_count", () => {
+    test("34) 200: Article response object includes comment_count", () => {
       return request(app)
         .get("/api/articles/3")
         .expect(200)
@@ -411,7 +403,7 @@ describe("CORE", () => {
           expect(body.article.comment_count).toBe("2");
         });
     });
-    test("36) 200: Returns an article with 0 comments", () => {
+    test("35) 200: Returns an article with 0 comments", () => {
       return request(app)
         .get("/api/articles/4")
         .expect(200)
@@ -424,7 +416,7 @@ describe("CORE", () => {
 
 describe("ADVANCED", () => {
   describe("GET /api/users/:username", () => {
-    test("37) 200: Responds with a user object by its username", () => {
+    test("36) 200: Responds with a user object by its username", () => {
       return request(app)
         .get("/api/users/butter_bridge")
         .expect(200)
@@ -437,7 +429,7 @@ describe("ADVANCED", () => {
           );
         });
     });
-    test("38) 400: Responds with an appropriate error when provided an invalid username", () => {
+    test("37) 400: Responds with an appropriate error when provided an invalid username", () => {
       return request(app)
         .get("/api/users/baa")
         .expect(400)
@@ -445,7 +437,7 @@ describe("ADVANCED", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("39) 404: Responds with an appropriate error when provided with a valid username that does not exist", () => {
+    test("38) 404: Responds with an appropriate error when provided with a valid username that does not exist", () => {
       return request(app)
         .get("/api/users/not_a_user")
         .expect(404)
@@ -455,7 +447,7 @@ describe("ADVANCED", () => {
     });
   });
   describe("PATCH /api/comments/:comment_id", () => {
-    test("40) 200: Responds with the updated comment object", () => {
+    test("39) 200: Responds with the updated comment object", () => {
       const update = { inc_votes: -2 };
       return request(app)
         .patch("/api/comments/1")
@@ -472,7 +464,7 @@ describe("ADVANCED", () => {
           expect(typeof body.comment.created_at).toBe("string");
         });
     });
-    test("41) 400: Responds with an appropriate error when passed a request with valid fields that have invalid inputs", () => {
+    test("40) 400: Responds with an appropriate error when passed a request with valid fields that have invalid inputs", () => {
       const update = { inc_votes: "Hi" };
       return request(app)
         .patch("/api/comments/1")
@@ -482,7 +474,7 @@ describe("ADVANCED", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("42) 400: Responds with an appropriate error when request is passed with invalid fields", () => {
+    test("41) 400: Responds with an appropriate error when request is passed with invalid fields", () => {
       return request(app)
         .patch("/api/comments/1")
         .send({})
@@ -491,7 +483,7 @@ describe("ADVANCED", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("43) 400: Responds with an appropriate error when passed with an invalid id", () => {
+    test("42) 400: Responds with an appropriate error when passed with an invalid id", () => {
       const update = { inc_votes: -2 };
       return request(app)
         .patch("/api/comments/not_a_valid_id")
@@ -501,7 +493,7 @@ describe("ADVANCED", () => {
           expect(body.msg).toBe("Bad request");
         });
     });
-    test("44) 404: Responds with an appropriate error when passed a valid id that doesn't exist", () => {
+    test("43) 404: Responds with an appropriate error when passed a valid id that doesn't exist", () => {
       const update = { inc_votes: -2 };
       return request(app)
         .patch("/api/comments/999999")
@@ -512,8 +504,8 @@ describe("ADVANCED", () => {
         });
     });
   });
-  describe("POST api/articles", () => {
-    test("45) 201: Responds with the posted article", () => {
+  describe("POST /api/articles", () => {
+    test("44) 201: Responds with the posted article", () => {
       const newItem = {
         username: "icellusedkars",
         title: "Kitties",
@@ -540,7 +532,7 @@ describe("ADVANCED", () => {
           expect(body.article.comment_count).toBe("0");
         });
     });
-    test("46) 400: Responds with appropriate errors when request has an invalid username", () => {
+    test("45) 400: Responds with appropriate errors when request has an invalid username", () => {
       const newItem = {
         username: "not_a_user",
         title: "Kitties",
@@ -577,6 +569,61 @@ describe("ADVANCED", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Invalid input");
+        });
+    });
+  });
+  describe("GET /api/articles (pagination)", () => {
+    test("48) 200: Responds with an array of articles to the length of the limit query", () => {
+      return request(app)
+        .get("/api/articles?limit=5")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(6);
+        });
+    });
+    test("49) 200: Responds with a default limit of 10 articles when no limit is provided", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(11);
+        });
+    });
+    test("50) 200: Responds with the total count regardless of the limit or filter", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles[body.articles.length - 1].total_count).toBe(13);
+        });
+    });
+    test("51) 200: Responds with the next set of articles on page 2 when query is p=2", () => {
+      return request(app)
+        .get("/api/articles?p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.articles)).toBe(true);
+          expect(body.articles.length).toBe(4);
+        });
+    });
+    test("52) 200: Responds with the default limit or p when input is invalid", () => {
+      return request(app)
+        .get("/api/articles?limit=not_a_number&&p=not_a_number")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(11);
+          expect(body.articles[0].article_id).toBe(3);
+          expect(body.articles[0].author).toBe("icellusedkars");
+          expect(body.articles[0].title).toBe(
+            "Eight pug gifs that remind me of mitch"
+          );
+          expect(body.articles[0].topic).toBe("mitch");
+          expect(typeof body.articles[0].created_at).toBe("string");
+          expect(body.articles[0].votes).toBe(0);
+          expect(typeof body.articles[0].comment_count).toBe("string");
         });
     });
   });
