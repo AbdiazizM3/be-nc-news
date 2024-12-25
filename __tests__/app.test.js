@@ -129,7 +129,7 @@ describe("CORE", () => {
         .get("/api/articles/1/comments")
         .expect(200)
         .then(({ body }) => {
-          expect(body.comments.length).toBe(11);
+          expect(body.comments.length).toBe(10);
           body.comments.forEach((comment) => {
             expect(typeof comment.comment_id).toBe("number");
             expect(typeof comment.body).toBe("string");
@@ -624,6 +624,71 @@ describe("ADVANCED", () => {
           expect(typeof body.articles[0].created_at).toBe("string");
           expect(body.articles[0].votes).toBe(0);
           expect(typeof body.articles[0].comment_count).toBe("string");
+        });
+    });
+  });
+  describe("GET /api/articles/:article_id/comments (pagination)", () => {
+    test("53) 200: Responds with an array of comments to the length of the limit query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=3")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(3);
+        });
+    });
+    test("54) 200: Responds with a default of 10 comments when no limit is provided", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("55) 200: Responds with the default 10 comment cap when invalid query is passed", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=not_a_number")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("56) 200: Responds with an array of the first 10 comments when p = 1", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("57) 200: Responds with a default of the first 10 comments when no query is provided", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(10);
+        });
+    });
+    test("58) 200: Responds with the next page of comments when p = 2", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(1);
+        });
+    });
+    test("59) 200: Responds with the default first §0 comments when query input is invalid", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=not_a_number")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length).toBe(10);
         });
     });
   });

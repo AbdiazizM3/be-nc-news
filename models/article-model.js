@@ -71,7 +71,7 @@ function fetchArticles(topic, sortBy, orderIn, limit, p) {
       }
       return [...rows.slice(0, cap), total];
     }
-    if (p > 1) {
+    if (section > 1) {
       return [...rows.slice(page, page + 10), total];
     }
     return [...rows.slice(0, 10), total];
@@ -96,13 +96,34 @@ function changeArticleById(id, body) {
     });
 }
 
-function fetchCommentById(id) {
+function fetchCommentById(id, limit, p) {
+  let cap = limit;
+  let section = p;
+
+  if (limit && isNaN(limit)) {
+    cap = 10;
+  }
+
+  if (p && isNaN(p)) {
+    section = 1;
+  }
+
+  const page = (section - 1) * 10;
   return db
     .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at`, [
       id,
     ])
     .then(({ rows }) => {
-      return rows;
+      if (cap) {
+        if (section > 1) {
+          return rows.slice(page, page + cap);
+        }
+        return rows.slice(0, cap);
+      }
+      if (section > 1) {
+        return rows.slice(page, page + 10);
+      }
+      return rows.slice(0, 10);
     });
 }
 

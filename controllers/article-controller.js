@@ -28,10 +28,11 @@ function getArticles(req, res, next) {
 }
 
 function getCommentById(req, res, next) {
+  const { limit, p } = req.query;
   const { article_id } = req.params;
   checkIfArticleExists(article_id)
     .then(() => {
-      fetchCommentById(article_id).then((comments) => {
+      fetchCommentById(article_id, limit, p).then((comments) => {
         res.status(200).send({ comments });
       });
     })
