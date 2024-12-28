@@ -692,4 +692,42 @@ describe("ADVANCED", () => {
         });
     });
   });
+  describe("POST /api/topics", () => {
+    test("60) 201: Responds with a topic object containing the newly added topic", () => {
+      const newItem = {
+        new_slug: "dogs",
+        new_description: "Not cats",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(newItem)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.topic.slug).toBe("dogs");
+          expect(body.topic.description).toBe("Not cats");
+        });
+    });
+    test("61) 400: Responds with appropriate errors when request body has invalid inputs", () => {
+      return request(app)
+        .post("/api/topics")
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+    test("62) 400: Responds with appropriate errors when request body has valid inputs with invalid types", () => {
+      const newItem = {
+        new_slug: 4,
+        new_description: "Not cats",
+      };
+      return request(app)
+        .post("/api/topics")
+        .send(newItem)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Invalid input");
+        });
+    });
+  });
 });
