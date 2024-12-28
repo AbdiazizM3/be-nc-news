@@ -163,5 +163,19 @@
       "body": "The most adorable creatures on earth.",
       "topic": "cats"
     }
+  },
+  "POST /api/topics": {
+    "description": "Serves a new topic object",
+    "queries": [],
+    "exampleResponse": {
+      "topic": {
+        "description": "Not cats",
+        "slug": "dogs"
+      }
+    },
+    "exampleRequest": {
+      "new_slug": "dogs",
+      "new_description": "Not cats"
+    }
   }
 }
