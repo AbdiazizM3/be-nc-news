@@ -213,6 +213,17 @@ function createArticle(newPost) {
   });
 }
 
+function removeArticle(id) {
+  return db.query(
+    `
+    DELETE FROM articles
+    WHERE article_id = $1
+    RETURNING *
+    `,
+    [id]
+  );
+}
+
 module.exports = {
   fetchArticleById,
   fetchArticles,
@@ -222,4 +233,5 @@ module.exports = {
   createComment,
   checkIfUsernameExists,
   createArticle,
+  removeArticle,
 };

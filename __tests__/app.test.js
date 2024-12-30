@@ -730,4 +730,25 @@ describe("ADVANCED", () => {
         });
     });
   });
+  describe("DELETE /api/articles/:article_id", () => {
+    test("63) 204: Responds with no content", () => {
+      return request(app).delete("/api/articles/4").expect(204);
+    });
+    test("64) 400: Responds with appropriate errors when article id is invalid", () => {
+      return request(app)
+        .delete("/api/articles/not_a_valid_id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+    test("65) 404: Responds with appropriate errors when article id is valid but does not exist", () => {
+      return request(app)
+        .delete("/api/articles/999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Article not found");
+        });
+    });
+  });
 });
