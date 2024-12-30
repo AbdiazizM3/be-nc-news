@@ -177,5 +177,10 @@
       "new_slug": "dogs",
       "new_description": "Not cats"
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "serves no content but deletes an article from articles",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
