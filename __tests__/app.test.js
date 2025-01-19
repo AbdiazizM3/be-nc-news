@@ -511,6 +511,8 @@ describe("ADVANCED", () => {
         title: "Kitties",
         body: "The most adorable creatures on earth.",
         topic: "cats",
+        image:
+          "https://cdn.shopify.com/s/files/1/0344/6469/files/cats-judging-you.jpg?v=1528922704",
       };
       return request(app)
         .post("/api/articles")
@@ -524,7 +526,7 @@ describe("ADVANCED", () => {
           );
           expect(body.article.topic).toBe("cats");
           expect(body.article.article_img_url).toBe(
-            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+            "https://cdn.shopify.com/s/files/1/0344/6469/files/cats-judging-you.jpg?v=1528922704"
           );
           expect(body.article.article_id).toBe(14);
           expect(body.article.votes).toBe(0);
