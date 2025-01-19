@@ -173,7 +173,7 @@ async function checkIfUsernameExists(body) {
 }
 
 function createArticle(newPost) {
-  const { username, title, body, topic } = newPost;
+  const { username, title, body, topic, image } = newPost;
 
   if (
     typeof username !== "string" ||
@@ -184,16 +184,35 @@ function createArticle(newPost) {
     return Promise.reject({ status: 400, msg: "Invalid input" });
   }
 
-  const insertItemStr = format(
-    `
+  if (image && typeof image !== "string") {
+    return Promsise.reject({ status: 400, msg: "invalid input" });
+  }
+
+  let insertItemStr = "";
+
+  if (image) {
+    insertItemStr += format(
+      `
+    INSERT INTO articles
+    (author, title, body, topic, article_img_url)
+    VALUES
+    (%L)
+    RETURNING *
+    `,
+      [username, title, body, topic, image]
+    );
+  } else {
+    insertItemStr += format(
+      `
     INSERT INTO articles
     (author, title, body, topic)
     VALUES
     (%L)
     RETURNING *
     `,
-    [username, title, body, topic]
-  );
+      [username, title, body, topic]
+    );
+  }
 
   return db.query(insertItemStr).then(({ rows }) => {
     const article_id = rows[0].article_id;
